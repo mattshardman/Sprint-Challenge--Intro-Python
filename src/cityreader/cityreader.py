@@ -1,6 +1,14 @@
+import csv
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
+class City:
+  def __init__(self, name, lat, lon):
+    self.name = name
+    self.lat = lat
+    self.lon = lon
 
+  def __str__(self):
+    return 'name: ' + self.name + ', lat: ' + str(self.lat) + ', lon: ' + str(self.lon)
 
 # We have a collection of US cities with population over 750,000 stored in the
 # file "cities.csv". (CSV stands for "comma-separated values".)
@@ -20,7 +28,12 @@ def cityreader(cities=[]):
   # TODO Implement the functionality to read from the 'cities.csv' file
   # For each city record, create a new City instance and add it to the 
   # `cities` list
-    
+    with open('cities.csv', newline='') as file:
+      data = csv.reader(file, delimiter=',')
+      for (i, row) in enumerate(data):
+        if len(row) >= 4 and i != 0:
+          city = City(row[0], float(row[3]), float(row[4]))
+          cities.append(city)
     return cities
 
 cityreader(cities)
@@ -67,5 +80,35 @@ def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # TODO Ensure that the lat and lon valuse are all floats
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
+
+  # within will hold the cities that fall within the specified region
+
+  lat1_f = float(lat1)
+  lat2_f = float(lat2) 
+  lon1_f = float(lon1)
+  lon2_f = float(lon2)
+
+  top_left = []
+  bottom_right = []
+
+  if (lat1 > lat2) and (lon1 < lon2):
+    top_left = [lat1, lon2]
+    bottom_right = [lat2, lon1]
+  elif (lat1 > lat2) and (lon1 < lon2):
+    top_left = [lat2, lon1]
+    bottom_right = [lat1, lon2]
+  elif (lat1 > lat2) and (lon1 > lon2):
+    top_left = [lat2, lon2]
+    bottom_right = [lat1, lon1]
+  else:
+    top_left = [lat1, lon1]
+    bottom_right = [lat2, lon2]
+
+  # TODO Ensure that the lat and lon valuse are all floats
+  # Go through each city and check to see if it falls within 
+  # the specified coordinates.
+  for c in cities:
+    if (top_left[0] < c.lat < bottom_right[0]) and (top_left[1] < c.lon < bottom_right[1]):
+      within.append(c)
 
   return within
